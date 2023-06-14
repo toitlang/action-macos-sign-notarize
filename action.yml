@@ -24,7 +24,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Check that we are on macos
+    - name: Check that we are on macOS
       if: ${{ runner.os != 'macos' }}
       shell: bash
       run: |
