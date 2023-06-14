@@ -1,0 +1,82 @@
+name: "Codesign and Notarize Action"
+description: "A GitHub Action to codesign and notarize macOS applications."
+
+inputs:
+  certificate:
+    description: "The certificate for signing."
+    required: true
+  certificate-password:
+    description: "The password for the certificate."
+    required: true
+  username:
+    description: "The Apple ID username to use for notarization."
+    required: true
+  password:
+    description: "The Apple ID password to use for notarization."
+    required: true
+  apple-team-id:
+    description: "The Apple Team ID to use for signing and notarization."
+    required: true
+  app-path:
+    description: "The path to the application to sign and notarize."
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check that we are on macos
+      if: ${{ runner.os != 'macos' }}
+      shell: bash
+      run: |
+        echo "This action only works on macOS."
+        exit 1
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        set -e
+        brew install zip
+
+    - name: Import signing keychain
+      uses: apple-actions/import-codesign-certs@v2
+      with:
+        keychain: signing_temp
+        p12-file-base64: ${{ inputs.certificate }}
+        p12-password: ${{ inputs.certificate-password }}
+
+    - name: Code sign
+      shell: bash
+      run: |
+        set -e
+        security find-identity -v signing_temp.keychain | grep "${{ inputs.apple-team-id }}" | grep "Developer ID Application"
+        codesign --keychain signing_temp.keychain --force --deep --sign "${{ inputs.apple-team-id }}" "${{ inputs.app-path }}" --options=runtime
+
+    - name: Create a ZIP
+      id: zip
+      shell: bash
+      run: |
+        TMP=$(mktemp -d -t zip.XXXXXXXXXX)
+        ZIP_PATH=$TMP/app.zip
+        zip -j $ZIP_PATH "${{ inputs.app-path }}"
+        echo "zip_path=$ZIP_PATH" >> $GITHUB_OUTPUT
+
+    - name: Notarize
+      shell: bash
+      run: |
+        set -e
+        xcrun notarytool submit \
+            "${{ steps.zip.outputs.zip_path }}" \
+            --wait \
+            --apple-id "${{ inputs.username }}" \
+            --password "${{ inputs.password }}" \
+            --team-id "${{ inputs.apple-team-id }}" \
+            --output-format json \
+        | tee out.json
+        grep -q "Accepted" out.json
+
+    - name: Check notarization
+      shell: bash
+      run: |
+        set -e
+        # See https://developer.apple.com/forums/thread/130560
+        codesign -vvvv -R="notarized" --check-notarization "${{ inputs.app-path }}"
