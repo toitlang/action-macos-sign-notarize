@@ -2,7 +2,7 @@
 
 A Github Action to codesign and notarize a macOS executable.
 
-This action only runs on macos.
+This action only runs on macOS.
 
 ## Inputs
 
