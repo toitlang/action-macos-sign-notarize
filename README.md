@@ -1,6 +1,6 @@
 # Codesign and Notarize
 
-A Github Action to codesign and notarize a macOS executable.
+A Github Action to codesign and notarize macOS applications.
 
 This action only runs on macOS.
 
