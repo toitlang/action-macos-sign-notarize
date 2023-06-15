@@ -1,4 +1,4 @@
-name: "Codesign and Notarize Action"
+name: "Codesign and Notarize"
 description: "A GitHub Action to codesign and notarize macOS applications."
 
 inputs:
