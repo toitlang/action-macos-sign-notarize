@@ -31,6 +31,27 @@ runs:
         echo "This action only works on macOS."
         exit 1
 
+    - name: Check that all inputs are given and non-empty
+      shell: bash
+      run: |
+        set -e
+        if [[ -z "${{ inputs.certificate }}" ]]; then
+          echo "Input certificate is missing."
+          exit 1
+        fi
+        if [[ -z "${{ inputs.certificate-password }}" ]]; then
+          echo "Input certificate-password is missing."
+          exit 1
+        fi
+        if [[ -z "${{ inputs.username }}" ]]; then
+          echo "Input username is missing."
+          exit 1
+        fi
+        if [[ -z "${{ inputs.password }}" ]]; then
+          echo "Input password is missing."
+          exit 1
+        fi
+
     - name: Install dependencies
       shell: bash
       run: |
