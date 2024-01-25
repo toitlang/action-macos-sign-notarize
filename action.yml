@@ -20,6 +20,10 @@ inputs:
   app-path:
     description: "The path to the application to sign and notarize."
     required: true
+  entitlements-path:
+    description: "The path to the entitlements file to use for signing."
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -51,6 +55,14 @@ runs:
           echo "Input password is missing."
           exit 1
         fi
+        if [[ -z "${{ inputs.apple-team-id }}" ]]; then
+          echo "Input apple-team-id is missing."
+          exit 1
+        fi
+        if [[ -z "${{ inputs.app-path }}" ]]; then
+          echo "Input app-path is missing."
+          exit 1
+        fi
 
     - name: Install dependencies
       shell: bash
@@ -67,8 +79,12 @@ runs:
     - name: Code sign
       shell: bash
       run: |
+        entitlements_arg=""
+        if [[ ! -z "${{ inputs.entitlements-path }}" ]]; then
+            entitlements_arg="--entitlements \"${{ inputs.entitlements-path }}\""
+        fi
         security find-identity -v signing_temp.keychain | grep "${{ inputs.apple-team-id }}" | grep "Developer ID Application"
-        codesign --keychain signing_temp.keychain --force --deep --sign "${{ inputs.apple-team-id }}" "${{ inputs.app-path }}" --options=runtime
+        codesign --keychain signing_temp.keychain --force --deep --sign "${{ inputs.apple-team-id }}" ${entitlements_arg} "${{ inputs.app-path }}" --options=runtime
 
     - name: Create a tmp directory
       id: tmp
