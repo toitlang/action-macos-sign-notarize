@@ -76,15 +76,20 @@ runs:
         p12-file-base64: ${{ inputs.certificate }}
         p12-password: ${{ inputs.certificate-password }}
 
+    - name: Set Entitlements Argument Env Var
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.entitlements-path }}" ]; then
+          echo "ENTITLEMENTS_ARG="--entitlements \"${{ inputs.entitlements-path }}\"" >> $GITHUB_ENV
+        else
+          echo "ENTITLEMENTS_ARG="" >> $GITHUB_ENV
+        fi
+
     - name: Code sign
       shell: bash
       run: |
-        entitlements_arg=""
-        if [[ ! -z "${{ inputs.entitlements-path }}" ]]; then
-            entitlements_arg="--entitlements \"${{ inputs.entitlements-path }}\""
-        fi
         security find-identity -v signing_temp.keychain | grep "${{ inputs.apple-team-id }}" | grep "Developer ID Application"
-        codesign --keychain signing_temp.keychain --force --deep --sign "${{ inputs.apple-team-id }}" ${entitlements_arg} "${{ inputs.app-path }}" --options=runtime
+        codesign --keychain signing_temp.keychain --force --deep --sign "${{ inputs.apple-team-id }}" ${{ env.ENTITLEMENTS_ARG }} "${{ inputs.app-path }}" --options=runtime
 
     - name: Create a tmp directory
       id: tmp
