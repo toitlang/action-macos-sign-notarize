@@ -80,7 +80,7 @@ runs:
       shell: bash
       run: |
         if [ -n "${{ inputs.entitlements-path }}" ]; then
-          echo "ENTITLEMENTS_ARG="--entitlements \"${{ inputs.entitlements-path }}\"" >> $GITHUB_ENV
+          echo "ENTITLEMENTS_ARG=\"--entitlements '${{ inputs.entitlements-path }}'\"" >> $GITHUB_ENV
         fi
 
     - name: Code sign
