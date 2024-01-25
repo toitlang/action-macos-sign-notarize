@@ -78,6 +78,7 @@ runs:
 
     - name: Set Entitlements Argument Env Var
       if: ${{ inputs.entitlements-path != '' }}
+      shell: bash
       env:
         entitlements_arg: --entitlements "${{ inputs.entitlements-path }}"
       run: |
