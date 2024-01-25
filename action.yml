@@ -79,10 +79,8 @@ runs:
     - name: Set Entitlements Argument Env Var
       if: ${{ inputs.entitlements-path != '' }}
       shell: bash
-      env:
-        entitlements_arg: --entitlements "${{ inputs.entitlements-path }}"
       run: |
-        echo "env.entitlements_arg is set to: ${{ env.entitlements_arg }}"
+        echo "entitlements_arg=--entitlements ${{ inputs.entitlements-path }}" >> $GITHUB_ENV
 
     - name: Code sign
       shell: bash
