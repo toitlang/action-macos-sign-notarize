@@ -82,7 +82,7 @@ runs:
         if [ -n "${{ inputs.entitlements-path }}" ]; then
           echo "ENTITLEMENTS_ARG="--entitlements \"${{ inputs.entitlements-path }}\"" >> $GITHUB_ENV
         else
-          echo "ENTITLEMENTS_ARG="" >> $GITHUB_ENV
+          echo "ENTITLEMENTS_ARG=\"\"" >> $GITHUB_ENV
         fi
 
     - name: Code sign
