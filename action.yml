@@ -80,6 +80,8 @@ runs:
       if: ${{ inputs.entitlements-path != '' }}
       env:
         entitlements_arg: --entitlements "${{ inputs.entitlements-path }}"
+      run: |
+        echo "env.entitlements_arg is set to: ${{ env.entitlements_arg }}"
 
     - name: Code sign
       shell: bash
