@@ -122,3 +122,8 @@ runs:
       run: |
         # See https://developer.apple.com/forums/thread/130560
         codesign -vvvv -R="notarized" --check-notarization "${{ inputs.app-path }}"
+
+    - name: Cleanup keychain
+      if: always() # Always run this step to ensure the keychain is properly disposed of
+      run: |
+        security delete-keychain signing_temp.keychain
