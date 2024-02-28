@@ -125,5 +125,6 @@ runs:
 
     - name: Cleanup keychain
       if: always() # Always run this step to ensure the keychain is properly disposed of
+      shell: bash
       run: |
         security delete-keychain signing_temp.keychain
