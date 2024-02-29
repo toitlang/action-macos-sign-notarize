@@ -20,7 +20,7 @@ This action only runs on macOS.
 
 ```yaml
 - name: Sign and notarize the release build
-  uses: toitlang/action-macos-sign-notarize@v1.1.1
+  uses: toitlang/action-macos-sign-notarize@v1.1.2
   with:
     certificate: ${{ secrets.CERTIFICATE }}
     certificate-password: ${{ secrets.CERTIFICATE_PASSWORD }}
