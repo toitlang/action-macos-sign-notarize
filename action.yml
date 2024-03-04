@@ -124,7 +124,8 @@ runs:
         codesign -vvvv -R="notarized" --check-notarization "${{ inputs.app-path }}"
 
     - name: Cleanup keychain
-      if: always() # Always run this step to ensure the keychain is properly disposed of
+      if: always() # Always run this step to ensure the keychain is properly disposed of.
       shell: bash
       run: |
-        security delete-keychain signing_temp.keychain
+        # Don't fail if the keychain doesn't exist.
+        security delete-keychain signing_temp.keychain || true
