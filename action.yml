@@ -104,7 +104,9 @@ runs:
         for f in ${{ inputs.app-path }}; do
           mkdir "$TMP/f$COUNTER"
           cp $f "$TMP/f$COUNTER"
-          zip -rj "$ZIP_PATH" "$TMP/f$COUNTER"
+          pushd $TMP
+          zip -r "$ZIP_PATH" "f$COUNTER"
+          popd
           ((COUNTER++))
           rm -rf "$TMP/f$COUNTER"
         done

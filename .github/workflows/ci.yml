@@ -16,10 +16,17 @@ jobs:
 
       - name: Build executables
         run: |
-          echo "int main() { return 0; }" > main.c
+          CURRENT_SECS=$(date +%s)
+          echo "int main() { return $CURRENT_SECS; }" > main.c
           gcc main.c -o main
+
+          ((CURRENT_SECS++))
+          echo "int main() { return $CURRENT_SECS; }" > main.c
           mkdir multi1
           gcc main.c -o multi1/main
+
+          ((CURRENT_SECS++))
+          echo "int main() { return $CURRENT_SECS; }" > main.c
           mkdir multi2
           gcc main.c -o multi2/main
 
