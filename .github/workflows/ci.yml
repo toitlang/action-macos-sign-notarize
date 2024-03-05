@@ -14,10 +14,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build executable
+      - name: Build executables
         run: |
           echo "int main() { return 0; }" > main.c
           gcc main.c -o main
+          mkdir multi1
+          gcc main.c -o multi1/main
+          mkdir multi2
+          gcc main.c -o multi2/main
 
       - name: Sign the executable
         uses: ./
@@ -33,14 +37,6 @@ jobs:
         run: |
           codesign -dvvv main
 
-      - name: Build executable
-        run: |
-          gcc main.c -o main2
-
-      - name: Build executable
-        run: |
-          gcc main.c -o main3
-
       - name: Sign several executables
         uses: ./
         with:
@@ -49,9 +45,9 @@ jobs:
           username: ${{ secrets.AC_USERNAME }}
           password: ${{ secrets.AC_PASSWORD }}
           apple-team-id: 33DS2ZRDST
-          app-path: main2 main3
+          app-path: multi1/main multi2/main3
 
       - name: Check signature
         run: |
-          codesign -dvvv main2
-          codesign -dvvv main3
+          codesign -dvvv multi1/main
+          codesign -dvvv multi2/main

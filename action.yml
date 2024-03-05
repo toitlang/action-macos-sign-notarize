@@ -100,8 +100,16 @@ runs:
       run: |
         TMP=${{ steps.tmp.outputs.path }}
         ZIP_PATH="$TMP/app.zip"
-        zip -j "$ZIP_PATH" ${{ inputs.app-path }}
+        COUNTER=0
+        for f in ${{ inputs.app-path }}; do
+          mkdir "$TMP/f$COUNTER"
+          cp $f "$TMP/f$COUNTER"
+          zip -rj "$ZIP_PATH" "$TMP/f$COUNTER"
+          ((COUNTER++))
+          rm -rf "$TMP/f$COUNTER"
+        done
         echo "zip_path=$ZIP_PATH" >> $GITHUB_OUTPUT
+        unzip -l "$ZIP_PATH"
 
     - name: Notarize
       shell: bash
