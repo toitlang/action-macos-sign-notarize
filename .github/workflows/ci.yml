@@ -32,3 +32,26 @@ jobs:
       - name: Check signature
         run: |
           codesign -dvvv main
+
+      - name: Build executable
+        run: |
+          gcc main.c -o main2
+
+      - name: Build executable
+        run: |
+          gcc main.c -o main3
+
+      - name: Sign several executables
+        uses: ./
+        with:
+          certificate: ${{ secrets.MACOS_CERTIFICATE }}
+          certificate-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          username: ${{ secrets.AC_USERNAME }}
+          password: ${{ secrets.AC_PASSWORD }}
+          apple-team-id: 33DS2ZRDST
+          app-path: main2 main3
+
+      - name: Check signature
+        run: |
+          codesign -dvvv main2
+          codesign -dvvv main3

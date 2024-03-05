@@ -86,7 +86,7 @@ runs:
       shell: bash
       run: |
         security find-identity -v signing_temp.keychain | grep "${{ inputs.apple-team-id }}" | grep "Developer ID Application"
-        codesign --keychain signing_temp.keychain --force --deep --sign "${{ inputs.apple-team-id }}" ${{ env.entitlements_arg }} "${{ inputs.app-path }}" --options=runtime
+        codesign --keychain signing_temp.keychain --force --deep --sign "${{ inputs.apple-team-id }}" ${{ env.entitlements_arg }} ${{ inputs.app-path }} --options=runtime
 
     - name: Create a tmp directory
       id: tmp
@@ -100,7 +100,7 @@ runs:
       run: |
         TMP=${{ steps.tmp.outputs.path }}
         ZIP_PATH="$TMP/app.zip"
-        zip -j "$ZIP_PATH" "${{ inputs.app-path }}"
+        zip -j "$ZIP_PATH" ${{ inputs.app-path }}
         echo "zip_path=$ZIP_PATH" >> $GITHUB_OUTPUT
 
     - name: Notarize
@@ -121,7 +121,7 @@ runs:
       shell: bash
       run: |
         # See https://developer.apple.com/forums/thread/130560
-        codesign -vvvv -R="notarized" --check-notarization "${{ inputs.app-path }}"
+        codesign -vvvv -R="notarized" --check-notarization ${{ inputs.app-path }}
 
     - name: Cleanup keychain
       if: always() # Always run this step to ensure the keychain is properly disposed of.
