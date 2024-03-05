@@ -54,7 +54,7 @@ jobs:
           apple-team-id: 33DS2ZRDST
           app-path: multi1/main multi2/main
 
-      - name: Check signature
+      - name: Check signatures
         run: |
           codesign -dvvv multi1/main
           codesign -dvvv multi2/main
