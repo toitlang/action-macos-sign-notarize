@@ -30,6 +30,11 @@ jobs:
           mkdir multi2
           gcc main.c -o multi2/main
 
+          ((CURRENT_SECS++))
+          echo "int main() { return $CURRENT_SECS; }" > main.c
+          mkdir multi3
+          gcc main.c -o "multi3/main with space"
+
       - name: Sign the executable
         uses: ./
         with:
@@ -52,9 +57,13 @@ jobs:
           username: ${{ secrets.AC_USERNAME }}
           password: ${{ secrets.AC_PASSWORD }}
           apple-team-id: 33DS2ZRDST
-          app-path: multi1/main multi2/main
+          app-path:
+            multi1/main
+            multi2/main
+            multi3/main with space
 
       - name: Check signatures
         run: |
           codesign -dvvv multi1/main
           codesign -dvvv multi2/main
+          codesign -dvvv "multi3/main with space"
