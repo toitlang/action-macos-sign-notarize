@@ -64,16 +64,6 @@ runs:
           exit 1
         fi
 
-    - name: Extract paths
-      id: paths
-      shell: bash
-      run: |
-        PATHS=$(cat << APP-PATH-DELIMITER-95654260
-        ${{ inputs.app-path }}
-        APP-PATH-DELIMITER-95654260
-        )
-        echo "PATHS
-
     - name: Install dependencies
       shell: bash
       run: |
