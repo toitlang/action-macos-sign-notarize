@@ -57,7 +57,7 @@ jobs:
           username: ${{ secrets.AC_USERNAME }}
           password: ${{ secrets.AC_PASSWORD }}
           apple-team-id: 33DS2ZRDST
-          app-path:
+          app-path: |
             multi1/main
             multi2/main
             multi3/main with space
