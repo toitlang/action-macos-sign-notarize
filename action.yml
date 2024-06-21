@@ -18,7 +18,7 @@ inputs:
     description: "The Apple Team ID to use for signing and notarization."
     required: true
   app-path:
-    description: "The path to the application to sign and notarize."
+    description: "The paths to the application to sign and notarize. One on each line."
     required: true
   entitlements-path:
     description: "The path to the entitlements file to use for signing."
@@ -86,7 +86,12 @@ runs:
       shell: bash
       run: |
         security find-identity -v signing_temp.keychain | grep "${{ inputs.apple-team-id }}" | grep "Developer ID Application"
-        codesign --keychain signing_temp.keychain --force --deep --sign "${{ inputs.apple-team-id }}" ${{ env.entitlements_arg }} "${{ inputs.app-path }}" --options=runtime
+        PATHS=$(cat << APP-PATH-DELIMITER-95654260
+        ${{ inputs.app-path }}
+        APP-PATH-DELIMITER-95654260
+        )
+        echo "$PATHS" | tr '\n' '\0' | xargs -0 -r \
+          codesign --keychain signing_temp.keychain --force --deep --sign "${{ inputs.apple-team-id }}" ${{ env.entitlements_arg }} --options=runtime
 
     - name: Create a tmp directory
       id: tmp
@@ -100,7 +105,12 @@ runs:
       run: |
         TMP=${{ steps.tmp.outputs.path }}
         ZIP_PATH="$TMP/app.zip"
-        zip -j "$ZIP_PATH" "${{ inputs.app-path }}"
+        PATHS=$(cat << APP-PATH-DELIMITER-95654260
+        ${{ inputs.app-path }}
+        APP-PATH-DELIMITER-95654260
+        )
+        echo "$PATHS" | tr '\n' '\0' | xargs -0 -r \
+          zip "$ZIP_PATH"
         echo "zip_path=$ZIP_PATH" >> $GITHUB_OUTPUT
 
     - name: Notarize
@@ -121,7 +131,12 @@ runs:
       shell: bash
       run: |
         # See https://developer.apple.com/forums/thread/130560
-        codesign -vvvv -R="notarized" --check-notarization "${{ inputs.app-path }}"
+        PATHS=$(cat << APP-PATH-DELIMITER-95654260
+        ${{ inputs.app-path }}
+        APP-PATH-DELIMITER-95654260
+        )
+        echo "$PATHS" | tr '\n' '\0' | xargs -0 -r \
+          codesign -vvvv -R="notarized" --check-notarization
 
     - name: Cleanup keychain
       if: always() # Always run this step to ensure the keychain is properly disposed of.
