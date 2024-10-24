@@ -42,7 +42,7 @@ jobs:
           certificate-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
           username: ${{ secrets.AC_USERNAME }}
           password: ${{ secrets.AC_PASSWORD }}
-          apple-team-id: 33DS2ZRDST
+          apple-team-id: ${{ vars.MACOS_TEAM_ID }}
           app-path: main
 
       - name: Check signature
@@ -56,7 +56,7 @@ jobs:
           certificate-password: ${{ secrets.MACOS_CERTIFICATE_PWD }}
           username: ${{ secrets.AC_USERNAME }}
           password: ${{ secrets.AC_PASSWORD }}
-          apple-team-id: 33DS2ZRDST
+          apple-team-id: ${{ vars.MACOS_TEAM_ID }}
           app-path: |
             multi1/main
             multi2/main

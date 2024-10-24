@@ -12,7 +12,7 @@ This action only runs on macOS.
 | certificate-password | The password for the certificate | `${{ secrets.CERTIFICATE_PASSWORD }}` | Yes |
 | username | The Apple ID username to use for notarization | `${{ secrets.APPLE_ID_USERNAME }}` | Yes |
 | password | The Apple ID password to use for notarization | `${{ secrets.APPLE_ID_PASSWORD }}` | Yes |
-| apple-team-id | The Apple Team ID to use for signing and notarization | `33DS2ZRDST` | Yes |
+| apple-team-id | The Apple Team ID to use for signing and notarization | `${{ vars.APPLE_TEAM_ID }}` | Yes |
 | app-path | The path(s) to the application to sign and notarize. Multiple files should be on separate lines. | `build/my_app` | Yes |
 | entitlements-path | The path to the entitlements file to use for signing | `src/entitlements.plist` | No |
 
@@ -26,6 +26,6 @@ This action only runs on macOS.
     certificate-password: ${{ secrets.CERTIFICATE_PASSWORD }}
     username: ${{ secrets.APPLE_ID_USERNAME }}
     password: ${{ secrets.APPLE_ID_PASSWORD }}
-    apple-team-id: 33DS2ZRDST
+    apple-team-id: ${{ vars.APPLE_TEAM_ID }}
     app-path: build/my_app
 ```
