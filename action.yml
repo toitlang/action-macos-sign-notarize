@@ -70,7 +70,7 @@ runs:
         brew install zip
 
     - name: Import signing keychain
-      uses: apple-actions/import-codesign-certs@cfd6eb39a2c848ead8836bda6b56813585404ba7  # v5.0.0
+      uses: apple-actions/import-codesign-certs@6580460f690159ebc45258db0c7c1b03a6a97d01  # v5
       with:
         keychain: signing_temp
         p12-file-base64: ${{ inputs.certificate }}
