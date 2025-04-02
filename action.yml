@@ -69,10 +69,19 @@ runs:
       run: |
         brew install zip
 
+    - name: Create temporary name
+      id: name
+      shell: bash
+      run: |
+        tmp_file=$(mktemp -t signing_temp.XXXXXXXXXX)
+        name=$(basename "$tmp_file")
+        # Don't delete the temporary, so we don't create the same name at a later time.
+        echo "keychain_name=$name" >> $GITHUB_OUTPUT
+
     - name: Import signing keychain
-      uses: apple-actions/import-codesign-certs@e6c5cfe3e28d4abf8d61d2d51c863324d9d63666  # v5
+      uses: apple-actions/import-codesign-certs@6580460f690159ebc45258db0c7c1b03a6a97d01  # v5
       with:
-        keychain: signing_temp
+        keychain: ${{ steps.name.outputs.keychain_name }}
         p12-file-base64: ${{ inputs.certificate }}
         p12-password: ${{ inputs.certificate-password }}
 
@@ -85,13 +94,13 @@ runs:
     - name: Code sign
       shell: bash
       run: |
-        security find-identity -v signing_temp.keychain | grep "${{ inputs.apple-team-id }}" | grep "Developer ID Application"
+        security find-identity -v ${{ steps.name.outputs.keychain_name }}.keychain | grep "${{ inputs.apple-team-id }}" | grep "Developer ID Application"
         PATHS=$(cat << APP-PATH-DELIMITER-95654260
         ${{ inputs.app-path }}
         APP-PATH-DELIMITER-95654260
         )
         echo "$PATHS" | tr '\n' '\0' | xargs -0 -r \
-          codesign --keychain signing_temp.keychain --force --deep --sign "${{ inputs.apple-team-id }}" ${{ env.entitlements_arg }} --options=runtime
+          codesign --keychain ${{ steps.name.outputs.keychain_name }}.keychain --force --deep --sign "${{ inputs.apple-team-id }}" ${{ env.entitlements_arg }} --options=runtime
 
     - name: Create a tmp directory
       id: tmp
@@ -137,10 +146,3 @@ runs:
         )
         echo "$PATHS" | tr '\n' '\0' | xargs -0 -r \
           codesign -vvvv -R="notarized" --check-notarization
-
-    - name: Cleanup keychain
-      if: always() # Always run this step to ensure the keychain is properly disposed of.
-      shell: bash
-      run: |
-        # Don't fail if the keychain doesn't exist.
-        security delete-keychain signing_temp.keychain || true
