@@ -1,5 +1,8 @@
 name: "Codesign and Notarize"
 description: "A GitHub Action to codesign and notarize macOS applications."
+branding:
+  icon: lock
+  color: black
 
 inputs:
   certificate:
