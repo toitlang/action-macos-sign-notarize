@@ -82,7 +82,7 @@ runs:
         echo "keychain_name=$name" >> $GITHUB_OUTPUT
 
     - name: Import signing keychain
-      uses: apple-actions/import-codesign-certs@ed566915236a0e81eeed065c946857e981faf3b7  # v5
+      uses: apple-actions/import-codesign-certs@7a19f2cdddcb3adaebbb2e6a32e757709129f0b3  # v5
       with:
         keychain: ${{ steps.name.outputs.keychain_name }}
         p12-file-base64: ${{ inputs.certificate }}
