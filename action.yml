@@ -67,11 +67,6 @@ runs:
           exit 1
         fi
 
-    - name: Install dependencies
-      shell: bash
-      run: |
-        brew install zip
-
     - name: Create temporary name
       id: name
       shell: bash
